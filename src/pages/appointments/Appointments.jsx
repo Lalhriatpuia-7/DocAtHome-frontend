@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { bookAppointment } from "../api";
+import { bookAppointment } from "../../apis/authApi";
 
 const Appointments = () => {
   const [appointments, setAppointments] = useState([]);

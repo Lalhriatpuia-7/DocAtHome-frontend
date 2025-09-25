@@ -1,0 +1,49 @@
+form h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+form select,
+form input {
+  width: 100%;
+  padding: 10px;
+  /* margin: 10px 0; */
+  border: 1px solid #ccc;
+  border-radius: --border-radius;
+}
+form select:focus,
+form input:focus {
+  /* border-color: var(--primary-color); */
+  outline: none;
+  /* background-color: var(--primary-color); */
+}
+
+
+
+form button {
+  width: 100%;
+  padding: 10px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: --border-radius;
+  cursor: pointer;
+  transition: background-color var(--transition-duration);
+}
+form button:hover {
+  background-color: var(--link-hover-color);
+}
+.login-link {
+    margin-top: 10px;
+    text-align: center;
+    color: var(--link-color);
+    display: block;
+}
+
+.register-button{
+    margin-top: 10px;
+}
+.error-text {
+  color: red;
+  font-size: 0.85rem;
+  margin-top: 2px;
+}

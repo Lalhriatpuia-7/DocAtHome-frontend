@@ -1,0 +1,56 @@
+.email-label {
+   
+    /* font-weight: bold; */
+    text-align: left;
+}
+.password-label {
+   
+    /* font-weight: bold; */
+    text-align: left;
+}
+.login-form{
+    display: flex;
+    flex-direction: column;
+    
+}
+
+.login-form input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+
+}
+.login-form button {
+    padding: 10px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: background-color var(--transition-duration);
+}
+.login-form button:hover {
+    background-color: var(--link-hover-color);
+}
+.login-form a {
+  
+    text-align: center;
+    color: var(--link-color);
+}
+.login-form a:hover {
+    color: var(--link-hover-color);
+}
+
+.login-form button {
+    width: 100%;
+    padding:var(--button-padding);
+}
+.login-form h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+.forgot-password-link{
+    display:block;
+    text-align: right !important;
+    margin-top: 5px;
+    margin-bottom: 15px;
+}
