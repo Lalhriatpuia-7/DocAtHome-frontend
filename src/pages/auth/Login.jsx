@@ -40,6 +40,7 @@ const Login = () => {
         value={form.email}
         onChange={handleChange}
         placeholder="Email"
+        required={true}
       />
       <label className="password-label">Password:</label>
       <input
@@ -48,6 +49,7 @@ const Login = () => {
         value={form.password}
         onChange={handleChange}
         placeholder="Password"
+         required={true}
       />
       <button type="submit">Login</button>
       {error && <div><div style={{ color: "red" }}>{error}</div><div><a href="/forgot-password" className="forgot-password-link">forgot password? </a> </div></div>}

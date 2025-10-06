@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const API_BASE = "http://localhost:5000/api";
+// const API_BASE = "http://localhost:5000/api";
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 export const loginUser = async (formData) => {
   try {
@@ -30,18 +31,7 @@ export const registerUser = async (formData) => {
   }
 };
 
-export async function bookAppointment(data, token) {
-  const res = await fetch(`${API_BASE}/appointments`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(data),
-  });
-  if (!res.ok) throw new Error("Booking failed");
-  return res.json();
-}
+
 
 
 export const forgotPassword = async (email) => {
