@@ -1,6 +1,6 @@
 :root{
     --primary-color: #4CAF50;
-    --secondary-color: #f44336;
+    --secondary-color: #08460d;
     --background-volor: #f0f0f0;
     --text-color: #333;
     --font-family: 'Arial', sans-serif;
@@ -30,6 +30,7 @@
     --z-index-overlay: 300;
     --z-index-base: 0;
     --button-padding: 10px 20px;
+    --card-bg-color: #faf5e8;
     
 }
 
@@ -412,5 +413,35 @@ h1, h2, h3, h4, h5, h6 {
         transition: none !important;
     }
 }
-
-
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    
+    color: white;
+}
+.navItems {
+    display: flex;
+    gap: 1rem;
+}
+.logout-button {
+    background-color: var(--primary-color);
+}
+.logout-button:hover {
+    background-color: var(--secondary-color);
+}
+.profile-logout {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+.editbtn {
+    background-color: var(--primary-color);
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: background-color var(--transition-duration);
+}

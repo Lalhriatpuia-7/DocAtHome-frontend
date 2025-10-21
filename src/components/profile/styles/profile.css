@@ -1,0 +1,257 @@
+/* styles/profile.css
+body {
+  background-color: #121212;
+  font-family: 'Segoe UI', sans-serif;
+  color: #fff;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+h1 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+input, textarea {
+  background-color: #1e1e1e;
+  border: 1px solid #333;
+  padding: 0.75rem;
+  border-radius: 6px;
+  color: #fff;
+}
+
+input::placeholder, textarea::placeholder {
+  color: #aaa;
+}
+
+button {
+  background-color: #007bff;
+  border: none;
+  padding: 0.75rem;
+  border-radius: 6px;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.image-preview {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-left: 1rem;
+} */
+
+/* ================================
+   PROFILE PAGE STYLING
+   ================================ */
+
+.profile-container {
+  max-width: 600px;
+  margin: 3rem auto;
+  background: var(--card-bg-color);
+  box-shadow: var(--box-shadow);
+  border-radius: 15px;
+  padding: 2rem;
+  font-family: var(--font-family);
+  color: var(--text-color);
+  animation: fadeInUp var(--transition-duration) ease-out;
+  transition: all var(--transition-duration) ease-in-out;
+  position: relative;
+}
+
+.profile-container:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Header */
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.profile-header h2 {
+  font-size: 1.8rem;
+  color: var(--secondary-color);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Edit button */
+.editbtn {
+  background: var(--primary-color);
+  color: #fff;
+  border: none;
+  border-radius: var(--border-radius);
+  padding: 0.5rem 0.8rem;
+  cursor: pointer;
+  transition: background var(--transition-duration) ease,
+              transform var(--transition-duration) ease;
+}
+
+.editbtn:hover {
+  background: var(--link-hover-color);
+  transform: scale(1.05);
+}
+
+/* Profile picture */
+.profile-container img {
+  display: block;
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin: 1rem auto;
+  box-shadow: var(--box-shadow);
+  animation: fadeIn 1s ease-in-out;
+  transition: transform var(--transition-duration) ease;
+}
+
+.profile-container img:hover {
+  transform: scale(1.05);
+}
+
+/* Text */
+.profile-container p {
+  font-size: var(--font-size);
+  line-height: var(--line-height);
+  margin: 0.6rem 0;
+  color: var(--text-color);
+}
+
+.profile-container strong {
+  color: var(--secondary-color);
+}
+
+/* Edit form */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-top: 1.5rem;
+  animation: fadeIn 0.6s ease-in;
+}
+
+input,
+textarea {
+  border: 1px solid #ccc;
+  border-radius: var(--border-radius);
+  padding: var(--input-padding);
+  font-size: var(--font-size);
+  outline: none;
+  background-color: #fff;
+  transition: all var(--transition-duration) ease;
+}
+
+input:focus,
+textarea:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.4);
+}
+
+textarea {
+  resize: none;
+  min-height: 100px;
+}
+
+/* Buttons */
+button {
+  padding: var(--button-padding);
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: var(--font-size);
+  font-weight: 500;
+  transition: all var(--transition-duration) ease;
+}
+
+button[type="submit"] {
+  background-color: var(--primary-color);
+  color: #fff;
+}
+
+button[type="submit"]:hover {
+  background-color: var(--link-hover-color);
+}
+
+button[type="button"] {
+  background-color: var(--error-color);
+  color: #fff;
+  margin-left: 0.5rem;
+}
+
+button[type="button"]:hover {
+  background-color: #d32f2f;
+}
+
+/* Error messages */
+.error {
+  color: var(--error-color);
+  text-align: center;
+  font-weight: 600;
+  margin-top: 1rem;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .profile-container {
+    padding: 1.5rem;
+    margin: 2rem 1rem;
+  }
+
+  .profile-header h2 {
+    font-size: 1.4rem;
+  }
+
+  input,
+  textarea {
+    font-size: 0.9rem;
+  }
+
+  .profile-container img {
+    width: 120px;
+    height: 120px;
+  }
+}

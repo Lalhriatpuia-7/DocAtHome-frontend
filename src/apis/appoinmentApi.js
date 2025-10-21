@@ -11,7 +11,7 @@ export async function bookAppointment(data, token) {
     },
     body: JSON.stringify(data),
   });
-  console.log(res);
+  c
   if (!res.ok) throw new Error("Booking failed");
   return res.json();
     } catch (err) {
@@ -23,14 +23,14 @@ export async function bookAppointment(data, token) {
 
 export async function getCurrentUser(data, token) {
     try {
-  const res = await fetch(`${API_BASE}/profile/getCurrentUser`, {
+  const res = await fetch(`${API_BASE}/profile/current-user`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
   });
-  console.log(res);
+  
   if (!res.ok) throw new Error("Fetching user failed");
   return res.json();
     } catch (err) {

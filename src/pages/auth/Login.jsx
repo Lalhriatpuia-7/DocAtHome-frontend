@@ -1,12 +1,15 @@
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import { loginUser } from "../../apis/authApi";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../../contexts/AuthContext.jsx";
 import "./login.css";
 
 const Login = () => {
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const {login} = useContext(AuthContext);
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -22,7 +25,9 @@ const Login = () => {
     try {
       const data = await loginUser(form);
       localStorage.setItem("token", data.token);
+      
       navigate("/dashboard"); // Redirect to dashboard
+      login(data.token)
     } catch (err) {
       
     setError(err);
