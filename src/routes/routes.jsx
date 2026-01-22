@@ -5,14 +5,14 @@ import {
   Route,
 } from "react-router-dom";
 import App from "../components/App";
-import Login from "../pages/auth/Login";
-import Register from "../pages/auth/Register";
-import ForgotPassword from "../pages/auth/Forgot-password";
+import Login from "../features/auth/Login";
+import Register from "../features/auth/Register";
+import ForgotPassword from "../features/auth/ForgotPassword";
 import Appointments from "../pages/appointments/Appointments";
 import Dashboard from "../pages/dashboard/Dashboard";
 import PrivateRoute from "./PrivateRoute";
-import Profile from "../components/profile/profile";
-import CreateProfile from "../components/profile/createProfile";
+import Profile from "../components/profile/Profile";
+import CreateProfile from "../components/profile/CreateProfile";
 
 
 const router = createBrowserRouter(

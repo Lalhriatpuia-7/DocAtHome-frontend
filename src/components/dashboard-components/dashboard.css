@@ -1,0 +1,8 @@
+.dashboard-container {
+    padding: 2rem;
+    background-color: var(--card-bg-color);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--box-shadow);
+    border-radius: var(--border-radius);
+    min-height: 100vh;
+}

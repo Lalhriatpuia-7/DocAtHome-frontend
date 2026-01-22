@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { registerUser } from "../../apis/authApi";
+import { registerUser } from "./authApi";
 import { useNavigate } from "react-router-dom";
 
-import "./register.css";
+import "./Register.css";
 
 const Register = () => {
   const navigate = useNavigate();  // ✅ move inside component

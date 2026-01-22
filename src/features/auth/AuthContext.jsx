@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect } from "react";
-import { getCurrentUser } from "../apis/appoinmentApi";
-import { logoutUser } from "../apis/authApi";
+import { getCurrentUser } from "../../apis/appointmentApi";
+import { logoutUser } from "./authApi";
+
 
 export const AuthContext = createContext();
 
@@ -56,50 +57,3 @@ export const AuthProvider = ({ children }) => {
 };
 
 
-// import { createContext, useState, useEffect } from "react";
-// import { getCurrentUser } from "../apis/appoinmentApi";
-// import { logoutUser } from "../apis/authApi";
-
-
-// export const AuthContext = createContext();
-
-// export const AuthProvider = ({ children }) => {
-//   const [user, setUser] = useState(null);
-
-
- 
-
-//   useEffect(() => {
-//     const token = localStorage.getItem("token");
-//     if (!token) return;
-    
-//     getCurrentUser({}, token)
-//       .then(data => {
-//         setUser(data);
-//       })
-//       .catch(() => setUser(null));
-//   }, []);
-
-
-  
-//   const login = (token) => {
-//     const userData = getCurrentUser({}, token)
-//       .then(data => {
-//         setUser(data);
-//       } 
-//       ).catch(() => setUser(null));
-//   };
-//   const logout = () => {
-    
-//     logoutUser(localStorage.getItem("token")).catch(err => console.error(err));
-//     localStorage.removeItem("token");
-//     setUser(null);
-//     window.location.href = "/login";
-//   };
-
-//   return (
-//     <AuthContext.Provider value={{ user, login, logout,  }}>
-//       {children}
-//     </AuthContext.Provider>
-//   );
-// };

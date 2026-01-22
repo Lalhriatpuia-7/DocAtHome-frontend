@@ -2,7 +2,7 @@
 
 const Footer = () => {
   return (
-<footer>
+<footer className="">
 
     <p>&copy; 2024 DocAtHome. All rights reserved.</p>
     <p>

@@ -1,0 +1,183 @@
+/* Base calendar container */
+.react-calendar {
+  width: 100%;
+  max-width: 400px;
+  background: #ffffff;
+  border: 1px solid #e6e6e6;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  font-family: 'Inter', sans-serif;
+  line-height: 1.5;
+  padding: 10px;
+  font-size: 14px;
+}
+
+/* Navigation (month/year header) */
+.react-calendar__navigation {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  flex-wrap: wrap; /* allow wrapping on very small screens */
+  gap: 4px;
+}
+
+.react-calendar__navigation button {
+  color: var(--box-color);
+  background-color: var(--box-background-color);
+  min-width: 44px;
+  border: none;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.react-calendar__navigation button:disabled {
+  color: var(--box-color);
+  background-color: var(--box-background-color);
+  cursor: not-allowed;
+  border: var(--box-outline-color) 1px solid;
+}
+
+.react-calendar__navigation button:enabled:hover {
+  background-color: var(--box-active-background-color);
+  color: var(--box-active-color);
+  border-radius: 6px;
+}
+
+/* Weekday labels */
+.react-calendar__month-view__weekdays {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.react-calendar__month-view__weekdays__weekday {
+  flex: 1; /* evenly distribute */
+  text-align: center;
+  padding: 6px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.react-calendar__month-view__weekdays__weekend {
+  color: var(--error-color) !important;
+}
+
+/* Days grid */
+.react-calendar__month-view__days {
+  border-radius: 8px;
+  color: var(--box-color);
+}
+
+.react-calendar__tile {
+  max-width: 100%;
+  padding: 0.75em 0.5em;
+  background: none;
+  border: none;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+/* Hover effect */
+.react-calendar__tile:hover {
+  background: var(--box-active-background-color);
+  color: var(--box-active-color);
+}
+
+/* Active day */
+.react-calendar__tile--active {
+  background: var(--box-active-background-color) !important;
+  color: var(--box-active-color) !important;
+  font-weight: 600;
+}
+
+/* Today highlight */
+.react-calendar__tile--now {
+  background: var(--box-active-background-color) !important;
+  color: var(--box-active-color) !important;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+/* Disabled days */
+.react-calendar__tile--disabled {
+  color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Buttons (general) */
+button[type="button"] {
+  background-color: var(--box-background-color);
+  color: var(--box-color);
+  border: var(--box-outline-color) 1px solid;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+button[type="button"]:hover {
+  background-color: var(--box-active-background-color);
+  color: var(--box-active-color);
+  border-radius: 6px;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  transform: scale(1.1);
+}
+
+/* Appointment dot style */
+.has-appointment-dot {
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 6px;
+  width: 6px;
+  background-color: var(--accent-color); /* Use a suitable accent color */
+  border-radius: 50%;
+  display: flex;
+  margin: 0 auto;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) or (width > 768px) {
+  .react-calendar {
+    max-width: 400px;
+   
+  }
+  .react-calendar__tile {
+    padding: 0.5em 0.25em;
+  }
+  .react-calendar__month-view__weekdays__weekday {
+    font-size: 12px;
+    padding: 0.4em 0;
+  }
+}
+
+
+@media (max-width: 480px) {
+  .react-calendar {
+    font-size: 12px;
+  }
+  .react-calendar__navigation button {
+    min-width: 30px; /* shrink buttons */
+    font-size: 12px;
+    padding: 2px;
+  }
+  .react-calendar__month-view__weekdays {
+    flex-wrap: wrap; /* allow wrapping */
+  }
+  .react-calendar__month-view__weekdays__weekday {
+    flex: 0 0 14%; /* each day ~14% width */
+    font-size: 11px;
+    padding: 0.3em 0;
+  }
+  .react-calendar__month-view__days__day {
+    font-size: 11px;
+  }
+}

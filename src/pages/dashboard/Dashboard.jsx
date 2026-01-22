@@ -1,9 +1,9 @@
 import React, { use, useContext } from 'react';
-import PatientDashboard from '../../components/dashboard-components/Patient-dashboard';
-import DoctorDashboard from '../../components/dashboard-components/Doctor-dashboard';
-import AdminDashboard from '../../components/dashboard-components/Admin-dashboard';
-import NurseDashboard from '../../components/dashboard-components/Nurse-dashboard';
-import { AuthContext } from '../../contexts/AuthContext.jsx';
+import PatientDashboard from '../../components/dashboard-components/patients/PatientDashboard';
+import DoctorDashboard from '../../components/dashboard-components/doctor/DoctorDashboard';
+import AdminDashboard from '../../components/dashboard-components/admin/AdminDashboard';
+import NurseDashboard from '../../components/dashboard-components/nurse/NurseDashboard';
+import { AuthContext } from '../../features/auth/AuthContext.jsx';
 
 
 

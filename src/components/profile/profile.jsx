@@ -1,13 +1,14 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, use } from "react";
 import { useForm } from "react-hook-form";
 import { getMyProfile, updateUserProfile } from "../../apis/profileApi";
-import { AuthContext } from "../../contexts/AuthContext";
+import { AuthContext } from "../../features/auth/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./styles/profile.css";
+import { useQueries } from "@tanstack/react-query";
 
 
-const baseURL = import.meta.env.VITE_API_BASE_URL_IMG;
+
 
 const Profile = () => {
   const { user, loading: authLoading } = useContext(AuthContext);
@@ -20,27 +21,30 @@ const Profile = () => {
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [preview, setPreview] = useState(null);
+  const [baseURL, setbaseURL] = useState("");
 
   // ✅ Fetch profile after AuthContext finishes loading
   useEffect(() => {
+    const query = useQueries({
+      queries: [
+        {
+          queryKey: ['profile', token],
+          queryFn: () => getMyProfile(token),
+          enabled: !!token && !authLoading,
+        },
+      ],
+    });
     const fetchProfile = async () => {
-      if (!token) {
-        setError("No authentication token found");
-        setLoading(false);
-        return;
-      }
-
+      setbaseURL(import.meta.env.VITE_API_BASE_URL_IMG || "http://localhost:5000/");
       try {
-        const data = await getMyProfile(token);
-        if (!data) {
+        const data = await query[0].refetch();
+        if (!data.data) {
           navigate("/profile/setup");
           return;
         }
-
-        setProfile(data);
-
+        setProfile(data.data);
         // Pre-fill form fields
-        for (const [key, value] of Object.entries(data)) {
+        for (const [key, value] of Object.entries(data.data)) {
           setValue(key, value);
         }
       } catch (err) {
@@ -182,21 +186,17 @@ const Profile = () => {
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <input {...register("age")} placeholder="Age" />
-          <input
-  type="file"
-  accept="image/*"
-  {...register("displayPicture")}
-  onChange={(e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setPreview(URL.createObjectURL(file));
-    }
-  }}
+          <input type="file" accept="image/*"{...register("displayPicture")}
+            onChange={(e) => {const file = e.target.files[0];
+            if (file) {
+            setPreview(URL.createObjectURL(file));
+            }
+      }}
 />
           <input {...register("address")} placeholder="Address" />
           <input {...register("phone")} placeholder="Phone" />
           <textarea {...register("bio")} placeholder="Bio" />
-          <div style={{ marginTop: "1rem" }}>
+          <div className="button-container-bottom">
             <button type="submit">Save</button>
             <button type="button" onClick={() => setIsEditing(false)}>
               Cancel
