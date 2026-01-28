@@ -41,15 +41,19 @@ export const getDoctorAvailability = async (token) => {
         'Authorization': `Bearer ${token}`,
       },
     });
-    console.log('Response from getDoctorAvailability:', response);
-    if(response.status === 404){
+
+    if (response.status === 404) {
       console.log("No availability set for this doctor. Please add availability.");
       return null; // No availability set
     }
+
     if (!response.ok) {
       throw new Error('Failed to fetch availability');
     }
-    return await response.json();
+
+    const data = await response.json(); // Read the body ONCE
+    console.log('Response from getDoctorAvailability:', data); // Log the data
+    return data; // Return the data
   } catch (error) {
     console.error('Error fetching doctor availability:', error);
     throw error;
@@ -78,10 +82,11 @@ export const updateDoctorAvailability = async (doctorId, availabilityData, token
 
 export const getDoctorRecurringAvailability = async (token) => {
   try {
-    const response = await fetch(`${API_BASE}/doctors/recurring-availability`, {
+    const response = await fetch(`${API_BASE}/doctors/availability`, {
       headers: {
         'Authorization': `Bearer ${token}`,
       },
+      cache: 'no-cache',
     });
     if (!response.ok) {
       throw new Error('Failed to fetch recurring availability');

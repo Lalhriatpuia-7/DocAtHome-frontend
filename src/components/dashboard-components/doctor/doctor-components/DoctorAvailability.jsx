@@ -1,7 +1,10 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getDoctorRecurringAvailability, addDoctorRecurringAvailability, deleteDoctorRecurringAvailability } from '../../../../apis/dashboardsApis/doctorDashboardApi';
 import { AuthContext } from '../../../../features/auth/AuthContext';
+import Calendar from 'react-calendar';
+import '../../calendar-style/Calendar.css';
+import { getTileClassName, getTileContent } from '../../../../utils/doctorUtils.jsx';
 
 const DoctorAvailability = () => {
     const { user } = useContext(AuthContext);
@@ -11,13 +14,13 @@ const DoctorAvailability = () => {
     const [day, setDay] = useState('Monday');
     const [startTime, setStartTime] = useState('');
     const [endTime, setEndTime] = useState('');
+    const [date, setDate] = useState(new Date());
 
     const { data: availability, isLoading, isError, error } = useQuery({
         queryKey: ['doctorRecurringAvailability', user?._id],
-        queryFn: () => getDoctorRecurringAvailability(token),
+        queryFn: () => getDoctorRecurringAvailability(token),        
         enabled: !!user?._id && !!token,
     });
-
     const addAvailabilityMutation = useMutation({
         mutationFn: (newAvailability) => addDoctorRecurringAvailability(newAvailability, token),
         onSuccess: () => {
@@ -45,6 +48,49 @@ const DoctorAvailability = () => {
     const handleDeleteAvailability = (availabilityId) => {
         deleteAvailabilityMutation.mutate(availabilityId);
     };
+
+    const availabilityToRender = availability?.slots || [];
+
+    const availableDays = useMemo(() => {
+        const days = new Set();
+        const apiDayOfWeekMap = {
+            1: 'Monday',
+            2: 'Tuesday',
+            3: 'Wednesday',
+            4: 'Thursday',
+            5: 'Friday',
+            6: 'Saturday',
+            0: 'Sunday',
+        };
+        availabilityToRender.forEach(slot => {
+            if (apiDayOfWeekMap[slot.dayOfWeek]) {
+                days.add(apiDayOfWeekMap[slot.dayOfWeek]);
+            }
+        });
+        return days;
+    }, [availabilityToRender]);
+
+    const memoizedAvailabilityMap = useMemo(() => {
+        const map = {};
+        const apiDayOfWeekMap = {
+            1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday',
+            5: 'Friday', 6: 'Saturday', 0: 'Sunday',
+        };
+        availabilityToRender.forEach(slot => {
+            const dayName = apiDayOfWeekMap[slot.dayOfWeek];
+            if (dayName) {
+                if (!map[dayName]) {
+                    map[dayName] = [];
+                }
+                map[dayName].push(slot);
+            }
+        });
+        return map;
+    }, [availabilityToRender]);
+
+    const onChange = (newDate) => {
+        setDate(newDate);
+      };
 
     return (
         <div>
@@ -78,16 +124,7 @@ const DoctorAvailability = () => {
                 <h3>Current Availability:</h3>
                 {isLoading && <p>Loading availability...</p>}
                 {isError && <p>Error: {error.message}</p>}
-                <ul>
-                    {availability?.map((slot) => (
-                        <li key={slot._id}>
-                            {slot.day}: {slot.startTime} - {slot.endTime}
-                            <button onClick={() => handleDeleteAvailability(slot._id)} disabled={deleteAvailabilityMutation.isLoading}>
-                                {deleteAvailabilityMutation.isLoading ? 'Deleting...' : 'Delete'}
-                            </button>
-                        </li>
-                    ))}
-                </ul>
+                <Calendar onChange={onChange} value={date} tileClassName={getTileClassName(availableDays)} tileContent={getTileContent(memoizedAvailabilityMap)} />
             </div>
         </div>
     );

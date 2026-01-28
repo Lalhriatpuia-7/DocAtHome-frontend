@@ -1,9 +1,9 @@
-/* Base calendar container */
 .react-calendar {
   width: 100%;
-  max-width: 400px;
-  background: #ffffff;
-  border: 1px solid #e6e6e6;
+  max-width: 800px; /* Set fixed max-width */
+  margin: 0 auto; /* Center the calendar */
+  background: #ffffff; /* Ensure white background */
+  border: none; /* Remove border */
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   font-family: 'Inter', sans-serif;
@@ -70,38 +70,84 @@
 
 /* Days grid */
 .react-calendar__month-view__days {
-  border-radius: 8px;
-  color: var(--box-color);
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .react-calendar__tile {
+  /* flex properties are removed */
   max-width: 100%;
   padding: 0.75em 0.5em;
-  background: none;
-  border: none;
+  background: var(--box-active-color);
+  border:none !important;
   text-align: center;
-  cursor: pointer;
-  border-radius: 8px;
+  cursor: pointer;  
   transition: background 0.2s ease, color 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  position: relative;
+  height: 80px;
+
+
+  
+}
+
+.react-calendar__tile abbr {
+  font-weight: 700; /* Make date bolder */
+  font-size: 1.1em; /* Slightly larger date font */
+  color: var(--box-color); /* Use primary text color for date */
+  margin-bottom: 5px; /* Add some space below the date */
 }
 
 /* Hover effect */
 .react-calendar__tile:hover {
   background: var(--box-active-background-color);
-  color: var(--box-active-color);
+  color: var(--box-active-color); /* This color will be overridden for child elements */
+}
+
+.react-calendar__tile:hover abbr,
+.react-calendar__tile:hover .availability-slots,
+.react-calendar__tile:hover .slot-time,
+.react-calendar__tile:hover .more-slots-indicator {
+  color: white !important;
 }
 
 /* Active day */
 .react-calendar__tile--active {
   background: var(--box-active-background-color) !important;
-  color: var(--box-active-color) !important;
+  color: white !important; /* Changed to white */
   font-weight: 600;
+}
+
+.react-calendar__tile--active abbr,
+.react-calendar__tile--now abbr {
+  color: white !important;
+}
+
+.react-calendar__tile--active .availability-slots,
+.react-calendar__tile--now .availability-slots {
+  color: white !important;
+}
+
+.react-calendar__tile--active .slot-time,
+.react-calendar__tile--now .slot-time {
+  color: white !important;
+}
+
+.react-calendar__tile--active .more-slots-indicator,
+.react-calendar__tile--now .more-slots-indicator {
+  color: white !important;
 }
 
 /* Today highlight */
 .react-calendar__tile--now {
   background: var(--box-active-background-color) !important;
-  color: var(--box-active-color) !important;
+  color: white !important; /* Changed to white */
   border-radius: 8px;
   font-weight: 600;
 }
@@ -114,9 +160,9 @@
 
 /* Buttons (general) */
 button[type="button"] {
-  background-color: var(--box-background-color);
+  background-color: var(--box-active-color);
   color: var(--box-color);
-  border: var(--box-outline-color) 1px solid;
+  /* border: var(--box-outline-color) 1px solid; */
   cursor: pointer;
   transition: all 0.3s ease-in-out;
 }
@@ -127,7 +173,7 @@ button[type="button"]:hover {
   border-radius: 6px;
   font-weight: 500;
   box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  transform: scale(1.1);
+  transform: scale(1.01);
 }
 
 /* Appointment dot style */
@@ -144,11 +190,28 @@ button[type="button"]:hover {
   margin: 0 auto;
 }
 
+.availability-slots {
+  margin-top: 5px; /* Separate from the date */
+  font-size: 0.75em; /* Smaller font for availability */
+  color: #666; /* Slightly muted color for availability */
+  line-height: 1.2;
+}
+
+.slot-time {
+  white-space: nowrap; /* Prevent time from wrapping */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Add ellipsis if content overflows */
+}
+
+.more-slots-indicator {
+  font-size: 0.7em;
+  color: #999;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) or (width > 768px) {
   .react-calendar {
-    max-width: 400px;
-   
+    max-width: 100%;
   }
   .react-calendar__tile {
     padding: 0.5em 0.25em;

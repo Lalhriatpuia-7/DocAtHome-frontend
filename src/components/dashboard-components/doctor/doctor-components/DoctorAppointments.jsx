@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useMemo } from "react";
 import Calendar from 'react-calendar';
 import { getDoctorAvailability, getDoctorAppointments } from "../../../../apis/dashboardsApis/doctorDashboardApi";
 import { useQuery } from "@tanstack/react-query";
@@ -30,14 +30,18 @@ const DoctorAppointments = () => {
     setDate(newDate);
   };
 
+  const appointmentDates = useMemo(() => {
+    if (!doctorAppointments) return new Set();
+    const dates = new Set();
+    doctorAppointments.forEach(appointment => {
+      dates.add(new Date(appointment.date).toDateString());
+    });
+    return dates;
+  }, [doctorAppointments]);
+
   const tileContent = ({ date: calendarDate, view }) => {
-    if (view === 'month' && doctorAppointments) {
-      const hasAppointment = doctorAppointments.some(
-        (appointment) => new Date(appointment.date).toDateString() === calendarDate.toDateString()
-      );
-      if (hasAppointment) {
-        return <p className="has-appointment-dot"></p>; // Small dot to indicate appointment
-      }
+    if (view === 'month' && appointmentDates.has(calendarDate.toDateString())) {
+      return <p className="has-appointment-dot"></p>;
     }
     return null;
   };
@@ -46,30 +50,33 @@ const DoctorAppointments = () => {
     (appointment) => new Date(appointment.date).toDateString() === date.toDateString()
   );
   
-  return (
-    <div className="appointments-container">    
-        <h2>Doctor Appointments</h2>
-        
-        {isLoadingAvailability && <p>Loading availability...</p>}
-        {isErrorAvailability && <p>Error loading availability: {availabilityError.message}</p>}
-        {doctorAvailability ? (
-          <div className="availability-info">
-            <h3>Your Availability:</h3>
-            <ul>
-              {doctorAvailability.map((slot, index) => (
-                <li key={index}>
-                  {slot.day}: {slot.startTime} - {slot.endTime}
-                </li>
-              ))}
-            </ul>
-          </div>
-        ) : (
-          <p>No availability information available. Please add availability information.</p>
-        )}
+  const availabilityToRender =
+    doctorAvailability?.availability || (Array.isArray(doctorAvailability) ? doctorAvailability : []);
 
-        
-        {isLoadingAppointments && <p>Loading appointments...</p>}
-        {isErrorAppointments && <p>Error loading appointments: {appointmentsError.message}</p>}
+  return (
+    <div className="appointments-container">
+      <h2>Doctor Appointments</h2>
+
+      {isLoadingAvailability && <p>Loading availability...</p>}
+      {isErrorAvailability && <p>Error loading availability: {availabilityError.message}</p>}
+      {availabilityToRender.length > 0 ? (
+        <div className="availability-info">
+          <h3>Your Availability:</h3>
+          <ul>
+            {availabilityToRender.map((slot, index) => (
+              <li key={index}>
+                {slot.day}: {slot.startTime} - {slot.endTime}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : (
+        !isLoadingAvailability && <p>No availability information available. Please add availability information.</p>
+      )}
+
+
+      {isLoadingAppointments && <p>Loading appointments...</p>}
+      {isErrorAppointments && <p>Error loading appointments: {appointmentsError.message}</p>}
 
         <Calendar onChange={onChange} value={date} selectRange={false} tileContent={tileContent} />
         
