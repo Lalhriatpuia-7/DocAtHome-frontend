@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { handleDeleteAppointment } from "../../utils/appointmentUtils";
 import { bookAppointment } from "../../apis/appointmentApi";
 
 const Appointments = () => {
@@ -49,10 +50,7 @@ const Appointments = () => {
     // Logic to edit an existing appointment
   };
 
-  const handleDeleteAppointment = (id) => {
-    // Logic to delete an appointment
-  };
-
+  
   return (
     <div>
       <h1>Your Appointments</h1>

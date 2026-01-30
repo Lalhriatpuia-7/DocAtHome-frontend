@@ -1,5 +1,5 @@
 .react-calendar {
-  width: 100%;
+  /* width: 100%; */
   max-width: 800px; /* Set fixed max-width */
   margin: 0 auto; /* Center the calendar */
   background: #ffffff; /* Ensure white background */
@@ -210,9 +210,7 @@ button[type="button"]:hover {
 
 /* Responsive adjustments */
 @media (max-width: 768px) or (width > 768px) {
-  .react-calendar {
-    max-width: 100%;
-  }
+  
   .react-calendar__tile {
     padding: 0.5em 0.25em;
   }

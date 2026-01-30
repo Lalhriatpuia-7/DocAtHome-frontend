@@ -1,139 +1,113 @@
-const API_BASE = import.meta.env.VITE_API_BASE_URL;
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-export const getDoctorAppointments = async (doctorId, date, token) => {
-  try {
-    const response = await fetch(`${API_BASE}/doctors/appointments?date=${date}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
+// Placeholder for a new API function to delete a specific instance of recurring availability
+export const deleteDoctorSpecificAvailabilityInstance = async (date, reason, token) => {
+    
+   
+    // In a real scenario, this would be an API call like:
+    const response = await fetch(`${API_BASE_URL}/doctors/availability/unavailable`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ date: date.toISOString().split('T')[0], reason }),
     });
     if (!response.ok) {
-      throw new Error('Failed to fetch appointments');
+        throw new Error('Failed to add non-recurring date');
     }
-    return await response.json();
-  } catch (error) {
-    console.error('Error fetching doctor appointments:', error);
-    throw error;
-  }
+    // return response.json();
+    return new Promise(resolve => setTimeout(() => resolve({ success: true, message: "Simulated non-recurring date addition" }), 500)); 
 };
 
-export const getDoctorPatients = async (doctorId, token) => {
-  try {
-    const response = await fetch(`${API_BASE}/doctors/${doctorId}/patients`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
-    if (!response.ok) {
-      throw new Error('Failed to fetch patients');
+export const getDoctorAppointments = async (doctorId, date, token) => {
+    try {
+        const res = await fetch(`${API_BASE_URL}/doctors/${doctorId}/appointments?date=${date}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        if (!res.ok) {
+            throw new Error(`Failed to fetch doctor appointments: ${res.statusText}`);
+        }
+        return res.json();
+    } catch (error) {
+        console.error("Error fetching doctor appointments:", error);
+        throw error;
     }
-    return await response.json();
-  } catch (error) {
-    console.error('Error fetching doctor patients:', error);
-    throw error;
-  }
 };
 
 export const getDoctorAvailability = async (token) => {
-  try {
-    const response = await fetch(`${API_BASE}/doctors/availability`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
-
-    if (response.status === 404) {
-      console.log("No availability set for this doctor. Please add availability.");
-      return null; // No availability set
+    try {
+        const res = await fetch(`${API_BASE_URL}/doctors/me/availability`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        console.log("Response from getDoctorAvailability:", res);
+        if (!res.ok) {
+            throw new Error(`Failed to fetch doctor availability: ${res.statusText}`);
+        }
+        return res.json();
+    } catch (error) {
+        console.error("Error fetching doctor availability:", error);
+        throw error;
     }
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch availability');
-    }
-
-    const data = await response.json(); // Read the body ONCE
-    console.log('Response from getDoctorAvailability:', data); // Log the data
-    return data; // Return the data
-  } catch (error) {
-    console.error('Error fetching doctor availability:', error);
-    throw error;
-  }
 };
 
-export const updateDoctorAvailability = async (doctorId, availabilityData, token) => {
-  try {
-    const response = await fetch(`${API_BASE}/doctors/${doctorId}/availability`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(availabilityData),
-    });
-    if (!response.ok) {
-      throw new Error('Failed to update availability');
-    }
-    return await response.json();
-  } catch (error) {
-    console.error('Error updating doctor availability:', error);
-    throw error;
-  }
-};
-
+// These functions were added based on the imports in DoctorAvailability.jsx
 export const getDoctorRecurringAvailability = async (token) => {
-  try {
-    const response = await fetch(`${API_BASE}/doctors/availability`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-      cache: 'no-cache',
-    });
-    if (!response.ok) {
-      throw new Error('Failed to fetch recurring availability');
+    try {
+        const res = await fetch(`${API_BASE_URL}/doctors/availability`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        console.log("Response from getDoctorRecurringAvailability:", res);
+        if (!res.ok) {
+            throw new Error(`Failed to fetch doctor recurring availability: ${res.statusText}`);
+        }
+        return res.json();
+    } catch (error) {
+        console.error("Error fetching doctor recurring availability:", error);
+        throw error;
     }
-    return await response.json();
-  } catch (error) {
-    console.error('Error fetching recurring availability:', error);
-    throw error;
-  }
-}
+};
 
-export const addDoctorRecurringAvailability = async (availabilityData, token) => {
-  try {
-    const response = await fetch(`${API_BASE}/doctors/recurring-availability`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(availabilityData),
-    });
-    if (!response.ok) {
-      throw new Error('Failed to add recurring availability');
+export const addDoctorRecurringAvailability = async (newAvailability, token) => {
+    try {
+        const res = await fetch(`${API_BASE_URL}/doctors/me/recurring-availability`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(newAvailability),
+        });
+        if (!res.ok) {
+            throw new Error(`Failed to add doctor recurring availability: ${res.statusText}`);
+        }
+        return res.json();
+    } catch (error) {
+        console.error("Error adding doctor recurring availability:", error);
+        throw error;
     }
-    return await response.json();
-  } catch (error) {
-    console.error('Error adding recurring availability:', error);
-    throw error;
-  }
-}
+};
 
 export const deleteDoctorRecurringAvailability = async (availabilityId, token) => {
-  try {
-    const response = await fetch(`${API_BASE}/doctors/recurring-availability/${availabilityId}`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
-    if (!response.ok) {
-      throw new Error('Failed to delete recurring availability');
+    try {
+        const res = await fetch(`${API_BASE_URL}/doctors/me/recurring-availability/${availabilityId}`, {
+            method: 'DELETE',
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        if (!res.ok) {
+            throw new Error(`Failed to delete doctor recurring availability: ${res.statusText}`);
+        }
+        return res.json();
+    } catch (error) {
+        console.error("Error deleting doctor recurring availability:", error);
+        throw error;
     }
-    return await response.json();
-  } catch (error) {
-    console.error('Error deleting recurring availability:', error);
-    throw error;
-  }
-}
-
-
+};

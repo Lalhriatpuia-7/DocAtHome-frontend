@@ -5,4 +5,5 @@
     box-shadow: var(--box-shadow);
     border-radius: var(--border-radius);
     min-height: 100vh;
+    text-align: center;
 }
