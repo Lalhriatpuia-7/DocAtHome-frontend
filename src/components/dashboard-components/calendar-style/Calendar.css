@@ -242,3 +242,27 @@ button[type="button"]:hover {
     font-size: 11px;
   }
 }
+
+.booked-day {
+  background-color: var(--error-color) !important;
+  color: white !important;
+  border-radius: 8px;
+}
+.available-day {
+  background-color: var(--success-color) !important;
+  color: white !important;
+  border-radius: 8px;
+  border: var(--box-outline-color) 1px solid !important;
+  
+}
+.available-day:hover {
+  background-color: var(--link-hover-color) !important;
+  color: white !important;
+  border-radius: 8px;
+  border: var(--box-outline-color) 1px solid !important;
+}
+.unavailable-day {
+  /* background-color: var(--box-outline-color) !important; */
+  color: white !important;
+  border-radius: 8px;
+}

@@ -1,11 +1,16 @@
 import React, { useState, useContext, useMemo, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getDoctorRecurringAvailability, addDoctorRecurringAvailability, deleteDoctorRecurringAvailability, deleteDoctorSpecificAvailabilityInstance } from '../../../../apis/dashboardsApis/doctorDashboardApi';
+import { getDoctorRecurringAvailability, addDoctorRecurringAvailability, deleteDoctorSpecificAvailabilityInstance, removeUnavailableDate, deleteDoctorRecurringAvailability, addBreaksToRecurringAvailability, removeBreakFromRecurringAvailability, getBreaksForRecurringAvailability,addTimeAllotmentToRecurringAvailability, getTimeAllotmentsForRecurringAvailability} from '../../../../apis/dashboardsApis/doctorDashboardApi';
 import { AuthContext } from '../../../../features/auth/AuthContext';
 import Calendar from 'react-calendar';
 import '../../calendar-style/Calendar.css';
-import '../../calendar-style/popup.css'; // Import the new CSS file
+import '../../calendar-style/popup.css'; 
 import { getTileClassName, getTileContent, handleDeleteAvailabilityClick, confirmDelete, cancelDelete, ConfirmDeletePopup, DayAvailabilityPopup } from '../../../../utils/doctorUtils.jsx';
+import DeleteRecurringAvailabilities from './DeleteRecurringAvailabilities.jsx';
+import AddBreaks from './AddBreaks.jsx';
+import './availability.css';
+import RemoveBreaks from './removeBreaks.jsx';
+import TimeAllotment from './TimeAllotment.jsx';
 
 
 
@@ -14,7 +19,7 @@ const DoctorAvailability = () => {
     const token = localStorage.getItem("token");
     const queryClient = useQueryClient();
 
-    const [day, setDay] = useState('Monday');
+    const [day, setDay] = useState('Sunday');
     const [startTime, setStartTime] = useState('');
     const [endTime, setEndTime] = useState('');
     const [date, setDate] = useState(new Date());
@@ -25,6 +30,7 @@ const DoctorAvailability = () => {
     const [availabilityToDelete, setAvailabilityToDelete] = useState(null);
     const [slotDetailsToDelete, setSlotDetailsToDelete] = useState(null);
     const [specificDateToDelete, setSpecificDateToDelete] = useState(null);
+    const [deleteReason, setDeleteReason] = useState('');
 
 
     // State for day availability popup
@@ -46,6 +52,21 @@ const DoctorAvailability = () => {
         queryFn: () => getDoctorRecurringAvailability(token),        
         enabled: !!user?._id && !!token,
     });
+
+    const breakRes = useQuery({
+        queryKey: ['doctorBreaks', user?._id],
+        queryFn: () => getBreaksForRecurringAvailability(token).then(data => data.breaks || []), // Assuming breaks are part of the same API response
+        enabled: !!user?._id && !!token,
+    });
+    const breaks = breakRes.data;
+    const timeAllotmentRes = useQuery({
+        queryKey: ['doctorTimeAllotment', user?._id],
+        queryFn: () => getTimeAllotmentsForRecurringAvailability(token).then(data => data.timeAllotment), // Assuming time allotment is part of the same API response
+        enabled: !!user?._id && !!token,
+    });
+    const timeAllotment = timeAllotmentRes.data;
+    console.log("Fetched time allotment:", timeAllotment);
+    
     const addAvailabilityMutation = useMutation({
         mutationFn: (newAvailability) => addDoctorRecurringAvailability(newAvailability, token),
         onSuccess: () => {
@@ -56,7 +77,7 @@ const DoctorAvailability = () => {
 
     // Mutation for deleting a specific instance of a recurring slot
     const deleteSpecificAvailabilityInstanceMutation = useMutation({
-        mutationFn: ({ date, recurringSlotId }) => deleteDoctorSpecificAvailabilityInstance(date, recurringSlotId, token),
+        mutationFn: ({ date, recurringSlotId, reason }) => deleteDoctorSpecificAvailabilityInstance(date, reason, token),
         onSuccess: () => {
             queryClient.invalidateQueries(['doctorRecurringAvailability', user?._id]); // Invalidate recurring query to reflect changes
             // Potentially also invalidate a new query for specific date exceptions if implemented
@@ -65,6 +86,7 @@ const DoctorAvailability = () => {
             setAvailabilityToDelete(null);
             setSlotDetailsToDelete(null);
             setSpecificDateToDelete(null);
+            setDeleteReason(''); // Clear the reason
             setShowDayAvailabilityPopup(false); // Close day availability popup
         },
         onError: (err) => {
@@ -73,12 +95,67 @@ const DoctorAvailability = () => {
         }
     });
 
+    // Mutation to remove an unavailable specific date (make available)
+    const removeUnavailableDateMutation = useMutation({
+        mutationFn: (date) => removeUnavailableDate(date, token),
+        onSuccess: () => {
+            queryClient.invalidateQueries(['doctorRecurringAvailability', user?._id]);
+            setShowDayAvailabilityPopup(false);
+            setSelectedDate(null);
+        },
+        onError: (err) => {
+            console.error('Error removing unavailable date:', err);
+        }
+    });
+
+    // Mutation for deleting recurring availabilities by day of week
+    const deleteRecurringAvailabilityMutation = useMutation({
+        mutationFn: ({ days }) => deleteDoctorRecurringAvailability(days, token),
+        onSuccess: () => {
+            queryClient.invalidateQueries(['doctorRecurringAvailability', user?._id]);
+        },
+        onError: (err) => {
+            console.error('Error deleting recurring availability:', err);
+        }
+    });
+
+    const addBreakMutation = useMutation({
+        mutationFn: ({ breakDetails }) => addBreaksToRecurringAvailability(breakDetails, token),
+        onSuccess:()=>{
+            queryClient.invalidateQueries(['doctorRecurringAvailability', user?._id]);
+        },
+        onError: (err) => {
+            console.error('Error adding break:', err);      
+
+        }
+            
+    });
+
+    const removeBreakMutation = useMutation({
+        mutationFn: (breakId) => removeBreakFromRecurringAvailability(breakId, token),
+        onSuccess:()=>{
+            queryClient.invalidateQueries(['doctorRecurringAvailability', user?._id]);
+        },
+        onError: (err) => {
+            console.error('Error removing break:', err);
+        }
+    });       
+    // mutation for adding timeallotment
+    const timeAllotmentMutation = useMutation({
+        mutationFn: ({ timeAllotment }) => addTimeAllotmentToRecurringAvailability(timeAllotment, token),
+        onSuccess: () => {  
+            queryClient.invalidateQueries(['doctorTimeAllotment', user?._id]);
+        },
+        onError: (err) => {
+            console.error('Error adding time allotment:', err);
+        }
+    });
 
     const handleAddAvailability = (e) => {
         e.preventDefault();
         if (day && startTime && endTime) {
             addAvailabilityMutation.mutate({ day, startTime, endTime });
-            setDay('Monday');
+            setDay('Sunday');
             setStartTime('');
             setEndTime('');
         }
@@ -93,44 +170,18 @@ const DoctorAvailability = () => {
 
 
     const availabilityToRender = availability?.slots || [];
-    console.log("Fetched Recurring Availability:", availabilityToRender);
-
-    const availableDays = useMemo(() => {
-        const days = new Set();
-        availabilityToRender.forEach(slot => {
-            if (apiDayOfWeekMap[slot.dayOfWeek]) {
-                days.add(apiDayOfWeekMap[slot.dayOfWeek]);
-            }
-        });
-        return days;
-    }, [availabilityToRender, apiDayOfWeekMap]);
-
-    const memoizedAvailabilityMap = useMemo(() => {
-        const map = {};
-        const seenIds = new Set();
-        availabilityToRender.forEach(slot => {
-            if (seenIds.has(slot._id)) return;
-            seenIds.add(slot._id);
-            
-            const dayName = apiDayOfWeekMap[slot.dayOfWeek];
-            if (dayName) {
-                if (!map[dayName]) {
-                    map[dayName] = [];
-                }
-                map[dayName].push(slot);
-            }
-        });
-        return map;
-    }, [availabilityToRender, apiDayOfWeekMap]);
-
-    console.log("Memoized Availability Map:", memoizedAvailabilityMap);
+    
 
     const selectedDayOfWeek = selectedDate ? apiDayOfWeekMap[selectedDate.getDay()] : null;
     const slotsForSelectedDay = useMemo(() => {
-        if (!selectedDate) return [];
+        if (!selectedDate) {
+            return [];
+        }
 
         const dayOfWeekString = selectedDate.toLocaleDateString('en-US', { weekday: 'long' });
-        const allSlotsForDay = memoizedAvailabilityMap[dayOfWeekString] || [];
+        const allSlotsForDay = availabilityToRender.filter(slot => 
+            apiDayOfWeekMap[slot.dayOfWeek] === dayOfWeekString
+        );
 
         // Check if the API returns exceptions and filter them out
         const filteredSlots = allSlotsForDay.filter(slot => {
@@ -153,8 +204,7 @@ const DoctorAvailability = () => {
 
         return filteredSlots;
 
-    }, [selectedDate, memoizedAvailabilityMap]);
-    console.log("Slots for Selected Day:", slotsForSelectedDay);
+    }, [selectedDate, availabilityToRender, apiDayOfWeekMap]);
 
     const onChange = (newDate) => {
         setDate(newDate);
@@ -175,18 +225,20 @@ const DoctorAvailability = () => {
 
     return (
         <div>
+            <div className='recurring-availability-container'>
             <h2>Manage Recurring Availability</h2>
+            <div className='manage-availability'>
             <form onSubmit={handleAddAvailability}>
                 <div>
                     <label>Day of the week:</label>
                     <select value={day} onChange={(e) => setDay(e.target.value)}>
+                        <option value="Sunday">Sunday</option>
                         <option value="Monday">Monday</option>
                         <option value="Tuesday">Tuesday</option>
                         <option value="Wednesday">Wednesday</option>
                         <option value="Thursday">Thursday</option>
                         <option value="Friday">Friday</option>
                         <option value="Saturday">Saturday</option>
-                        <option value="Sunday">Sunday</option>
                     </select>
                 </div>
                 <div>
@@ -201,6 +253,12 @@ const DoctorAvailability = () => {
                     {addAvailabilityMutation.isLoading ? 'Adding...' : 'Add Availability'}
                 </button>
             </form>
+            <DeleteRecurringAvailabilities mutation={deleteRecurringAvailabilityMutation} />
+            <AddBreaks MutationAddBreak={addBreakMutation} />
+            <RemoveBreaks removeBreaksMutation={removeBreakMutation} breaks={breaks || []} />
+            <TimeAllotment timeAllotmentMutation={timeAllotmentMutation} PrevTimeAllotment={timeAllotment} />
+            </div>
+            </div>
             <div>
                 <h3>Current Availability:</h3>
                 {isLoading && <p>Loading availability...</p>}
@@ -208,9 +266,10 @@ const DoctorAvailability = () => {
                 <Calendar 
                     onChange={onChange} 
                     value={date} 
-                    tileClassName={getTileClassName(availableDays)} 
-                    tileContent={getTileContent(memoizedAvailabilityMap)} 
+                    tileClassName={getTileClassName(availabilityToRender, apiDayOfWeekMap)} 
+                    tileContent={getTileContent(availabilityToRender, apiDayOfWeekMap)} 
                     onClickDay={setSelectedDate} 
+                    calendarType="gregory"
                 />
             </div>
 
@@ -221,14 +280,17 @@ const DoctorAvailability = () => {
                 slots={slotsForSelectedDay}
                 onDeleteSlot={(availabilityId, slot, specificDate) => handleDeleteAvailabilityClick(availabilityId, slot, specificDate, setAvailabilityToDelete, setSlotDetailsToDelete, setSpecificDateToDelete, setShowDeletePopup, apiDayOfWeekMap)}
                 specificDate={selectedDate}
+                onMakeAvailable={(date) => removeUnavailableDateMutation.mutate(date)}
             />
 
             <ConfirmDeletePopup
                 isOpen={showDeletePopup}
-                onClose={() => cancelDelete(setShowDeletePopup, setAvailabilityToDelete, setSlotDetailsToDelete, setSpecificDateToDelete)}
-                onConfirm={() => confirmDelete(availabilityToDelete, specificDateToDelete, deleteSpecificAvailabilityInstanceMutation)}
+                onClose={() => cancelDelete(setShowDeletePopup, setAvailabilityToDelete, setSlotDetailsToDelete, setSpecificDateToDelete, setDeleteReason)}
+                onConfirm={() => confirmDelete(availabilityToDelete, specificDateToDelete, deleteSpecificAvailabilityInstanceMutation, deleteReason)}
                 slotDetails={slotDetailsToDelete}
                 specificDate={specificDateToDelete}
+                reason={deleteReason}
+                onReasonChange={(e) => setDeleteReason(e.target.value)}
             />
         </div>
     );

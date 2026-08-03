@@ -1,0 +1,23 @@
+.manage-availability {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    align-items: center;
+    justify-content:center;
+}
+form {
+    margin: 20px 0;
+}
+.add-break-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+.break-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: fit-content;
+    align-items: center;
+}

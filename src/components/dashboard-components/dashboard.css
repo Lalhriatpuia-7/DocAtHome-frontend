@@ -7,3 +7,58 @@
     min-height: 100vh;
     text-align: center;
 }
+
+.selected-dates-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 10px;
+    margin: 2rem auto;
+    max-width: 300px;
+}
+
+.date-btn {
+    padding: 10px 15px;
+    border: 2px solid var(--border-color);
+    background-color: #495057;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.date-btn:hover {
+    background-color: #2c3e50;
+    border-color: var(--primary-color, #007bff);
+    color: #fff;
+}
+
+.date-btn.selected {
+    background-color: var(--primary-color, #007bff);
+    color: white;
+    border-color: var(--primary-color, #007bff);
+}
+
+.delete-btn {
+    padding: 10px 20px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 1rem;
+    transition: all 0.3s ease;
+}
+
+.delete-btn:hover:not(:disabled) {
+    background-color: #c82333;
+}
+
+.delete-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+}

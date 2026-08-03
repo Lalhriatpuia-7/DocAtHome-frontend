@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { handleDeleteAppointment } from "../../utils/appointmentUtils";
+// import { handleDeleteAppointment } from "../../utils/appointmentUtils";
 import { bookAppointment } from "../../apis/appointmentApi";
 
 const Appointments = () => {
