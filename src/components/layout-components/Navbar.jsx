@@ -2,6 +2,7 @@ import React from "react";
 import { useContext } from "react";
 import { AuthContext } from "../../features/auth/AuthContext.jsx";
 import { Link } from "react-router-dom";
+import "./navbar.css";
 
 const Navbar = ()=>{
     const { user, logout } = useContext(AuthContext);
@@ -10,8 +11,15 @@ const Navbar = ()=>{
          
       <nav className="navbar">
         <div className="navItems">
-          <Link to="/login">Login</Link>
-          <Link to="/register">Register</Link>
+          {
+            user ? <span className="welcome-message">Welcome, {user.name}!</span> : (
+              <>
+                <Link to="/login">Login</Link>
+                <Link to="/register">Register</Link>
+              </>
+            )
+          }
+          
           {user && <Link to="/dashboard">Dashboard</Link>}
         </div>
         <div>
